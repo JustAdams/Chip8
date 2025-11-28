@@ -55,11 +55,23 @@ internal class CPU
             case 0x1:
                 Op_1NNN(opCode.NNN);
                 break;
+            case 0x3:
+                Op_3XNN(opCode.X, opCode.NN);
+                break;
+            case 0x4:
+                Op_4XNN(opCode.X, opCode.NN);
+                break;
+            case 0x5:
+                Op_5XY0(opCode.X, opCode.Y);
+                break;
             case 0x6:
                 Op_6XNN(opCode.X, opCode.NN);
                 break;
             case 0x7:
                 Op_7XNN(opCode.X, opCode.NN);
+                break;
+            case 0x9:
+                Op_9XY0(opCode.X, opCode.Y);
                 break;
             case 0xA:
                 Op_ANNN(opCode.NNN);
@@ -68,7 +80,7 @@ internal class CPU
                 Op_DXYN(opCode.X, opCode.Y, opCode.N);
                 break;
             default:
-                throw new NotImplementedException("OpCode not supported: " + opCode.NNNN);
+                throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
         }
     }
 
@@ -90,6 +102,45 @@ internal class CPU
     }
 
     /// <summary>
+    /// Skips one instruction if the value in VX is equal to NN.
+    /// </summary>
+    /// <param name="X">Variable register at X.</param>
+    /// <param name="NN">Value to compare against.</param>
+    private void Op_3XNN(int X, int NN)
+    {
+        if (VariableRegisters[X] == NN)
+        {
+            ProgramCounter += 2;
+        }
+    }
+
+    /// <summary>
+    /// Skips one instruction if the value in VX is not equal to NN.
+    /// </summary>
+    /// <param name="X">Variable register at X.</param>
+    /// <param name="NN">Value to compare against.</param>
+    private void Op_4XNN(int X, int NN)
+    {
+        if (VariableRegisters[X] != NN)
+        {
+            ProgramCounter += 2;
+        }
+    }
+
+    /// <summary>
+    /// Skips one instruction if the value in VX equals the value in VY.
+    /// </summary>
+    /// <param name="X">Variable register at X.</param>
+    /// <param name="Y">Variable register at Y.</param>
+    private void Op_5XY0(int X, int Y)
+    {
+        if (VariableRegisters[X] == VariableRegisters[Y])
+        {
+            ProgramCounter += 2;
+        }
+    }
+
+    /// <summary>
     /// Sets register VX to the value NN.
     /// </summary>
     /// <param name="X">VX register.</param>
@@ -108,6 +159,19 @@ internal class CPU
     {
         // TODO - doing a modulo here to simulate overflow since we are using integers.
         VariableRegisters[X] += NN % 256;
+    }
+
+    /// <summary>
+    /// Skips one instruction if the value in VX does not equal the value in VY.
+    /// </summary>
+    /// <param name="X">Variable register at X.</param>
+    /// <param name="Y">Variable register at Y.</param>
+    private void Op_9XY0(int X, int Y)
+    {
+        if (VariableRegisters[X] != VariableRegisters[Y])
+        {
+            ProgramCounter += 2;
+        }
     }
 
     /// <summary>

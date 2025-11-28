@@ -11,7 +11,7 @@ namespace Chip8
             IDisplay display = new TerminalDisplay();
             Chip8 chip8 = new Chip8(display);
 
-            ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\IBM Logo.ch8");
+            ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\test_opcode.ch8");
 
             chip8.LoadROM(rom);
 

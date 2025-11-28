@@ -46,6 +46,6 @@ internal readonly struct OpCode
 
     public override string ToString()
     {
-        return "" + NNNN;
+        return $"0x{NNNN:X}";
     }
 }

@@ -12,7 +12,7 @@ public class OPCodeTests
     [Test]
     public void Constructor_Success()
     {
-        ushort testOPCode = 0x123F;
+        int testOPCode = 0x123F;
         OpCode opCode = new OpCode(testOPCode);
 
         Assert.That(opCode.X, Is.EqualTo(0x2), "X extraction did not work");
