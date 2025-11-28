@@ -19,50 +19,54 @@ public class CPUTests
         cpu = new CPU(memory, display);
     }
 
-    //[Test]
-    //public void FetchInstruction_Success()
-    //{
-    //    cpu.FetchInstruction();
+    [Test]
+    public void Op_1NNN_Success()
+    {
+        // loading instruction set that should jump the PC to 0xAB3
+        int expectedAddress = 0xAB3;
+        int[] load = { 0x1A, 0xB3 };
+        memory.LoadMemory(load, cpu.ProgramCounter);
 
-    //}
+        Assert.That(cpu.ProgramCounter, Is.EqualTo(0x200), "Program counter isn't set to default of 0x200 at the start.");
+        cpu.Cycle();
+        Assert.That(cpu.ProgramCounter, Is.EqualTo(expectedAddress), "Program counter didn't jump to the correct address.");
+    }
 
-    //[Test]
-    //public void Op_1NNN_Success()
-    //{
-    //    Assert.That(cpu.ProgramCounter, Is.EqualTo(0x0), "Program counter isn't set to default of 0 at the start.");
-    //    OpCode opCode = new OpCode(0x1AB3);
-    //    cpu.ExecuteInstruction(opCode);
-    //    Assert.That(cpu.ProgramCounter, Is.EqualTo(opCode.NNN), "Program counter didn't jump to the correct address.");
-    //}
+    [Test]
+    public void Op_6XNN_Success()
+    {
+        // loading instruction set that should set var reg 3 to 0x4A
+        int[] load = { 0x63, 0x4A };
+        int register = 0x3;
+        memory.LoadMemory(load, cpu.ProgramCounter);
 
-    //[Test]
-    //public void Op_6XNN_Success()
-    //{
-    //    int register = 0x3;
-    //    Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x0), "Variable register X isn't set to default of 0 at the start.");
-    //    OpCode opCode = new OpCode(0x63A3);
-    //    cpu.ExecuteInstruction(opCode);
-    //    Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0xA3), "Variable register X isn't set to the correct value.");
-    //}
+        Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x0), "Variable register X isn't set to default of 0 at the start.");
+        cpu.Cycle();
+        Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x4A), "Variable register X isn't set to the correct value.");
+    }
 
     [Test]
     public void Op_7XNN_Success()
     {
-        int[] f = { 0x73, 0x03, 0x73, 0x04 };
+        // loading two instruction sets that should add 3 and 4 to the var register 3
+        int[] load = { 0x73, 0x03, 0x73, 0x04 };
         int register = 0x3;
-        memory.LoadMemory(f, 0x200);
+        memory.LoadMemory(load, cpu.ProgramCounter);
+
         Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x0), "Variable register X isn't set to default of 0 at the start.");
         cpu.Cycle();
         cpu.Cycle();
         Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x07), "Variable register X isn't set to the correct value.");
     }
 
-    //[Test]
-    //public void Op_ANNN_Success()
-    //{
-    //    Assert.That(cpu.IndexRegister, Is.EqualTo(0x0), "Index register isn't set to default of 0 at the start.");
-    //    OpCode opCode = new OpCode(0xA123);
-    //    cpu.ExecuteInstruction(opCode);
-    //    Assert.That(cpu.IndexRegister, Is.EqualTo(0x123), "Index register isn't set to the correct value.");
-    //}
+    [Test]
+    public void Op_ANNN_Success()
+    {
+        int[] load = { 0xA3, 0xAA };
+        memory.LoadMemory(load, cpu.ProgramCounter);
+
+        Assert.That(cpu.IndexRegister, Is.EqualTo(0x0), "Index register isn't set to default of 0 at the start.");
+        cpu.Cycle();
+        Assert.That(cpu.IndexRegister, Is.EqualTo(0x3AA), "Index register isn't set to the correct value.");
+    }
 }

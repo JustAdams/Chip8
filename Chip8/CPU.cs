@@ -12,13 +12,21 @@ internal class CPU
     private Memory memory;
     IDisplay display;
 
+    /// <summary>
+    /// Current instruction in memory.
+    /// </summary>
     public int ProgramCounter { get; private set; }
+    /// <summary>
+    /// Points to locations in memory.
+    /// </summary>
     public int IndexRegister { get; private set; }
 
     /// <summary>
     /// 16 8-bit general-purpose variable registers labeled 0 - F.
     /// </summary>
     public int[] VariableRegisters { get; private set; }
+
+    public Stack<int> Subroutines { get; private set; }
 
     public CPU(Memory memory, IDisplay display)
     {
@@ -28,6 +36,7 @@ internal class CPU
         ProgramCounter = 0x200;
 
         VariableRegisters = new int[16];
+        Subroutines = new Stack<int>();
     }
 
     public void Cycle()
@@ -50,10 +59,23 @@ internal class CPU
         switch (opCode.F)
         {
             case 0x0:
-                Op_00E0();
+                switch (opCode.N)
+                {
+                    case 0x0:
+                        Op_00E0();
+                        break;
+                    case 0xE:
+                        Op_00EE(); 
+                        break;
+                    default:
+                        throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
+                }
                 break;
             case 0x1:
                 Op_1NNN(opCode.NNN);
+                break;
+            case 0x2:
+                Op_2NNN(opCode.NNN);
                 break;
             case 0x3:
                 Op_3XNN(opCode.X, opCode.NN);
@@ -69,6 +91,46 @@ internal class CPU
                 break;
             case 0x7:
                 Op_7XNN(opCode.X, opCode.NN);
+                break;
+            case 0x8:
+                switch (opCode.N)
+                {
+                    case 0x0:
+                        Op_8XY0(opCode.X, opCode.Y);
+                        break;
+                    case 0x1:
+                        Op_8XY1(opCode.X, opCode.Y);
+                        break;
+                    case 0x2:
+
+                        Op_8XY2(opCode.X, opCode.Y);
+                        break;
+                    case 0x3:
+
+                        Op_8XY3(opCode.X, opCode.Y);
+                        break;
+                    case 0x4:
+
+                        Op_8XY4(opCode.X, opCode.Y);
+                        break;
+                    case 0x5:
+
+                        Op_8XY5(opCode.X, opCode.Y);
+                        break;
+                    case 0x6:
+                        Op_8XY6(opCode.X, opCode.Y);
+                        break;
+                    case 0x7:
+
+                        Op_8XY7(opCode.X, opCode.Y);
+                        break;
+                    case 0xE:
+                        Op_8XYE(opCode.X, opCode.Y);
+                        break;
+
+                    default:
+                        throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
+                }
                 break;
             case 0x9:
                 Op_9XY0(opCode.X, opCode.Y);
@@ -92,12 +154,24 @@ internal class CPU
         display.ClearDisplay();
     }
 
+    private void Op_00EE()
+    {
+        // todo: validate subroutines stack has a value
+        ProgramCounter = Subroutines.Pop();
+    }
+
     /// <summary>
     /// Sets the program counter to NNN.
     /// </summary>
     /// <param name="NNN">Memory address to jump the program counter to.</param>
     private void Op_1NNN(int NNN)
     {
+        ProgramCounter = NNN;
+    }
+
+    private void Op_2NNN(int NNN)
+    {
+        Subroutines.Push(ProgramCounter);
         ProgramCounter = NNN;
     }
 
@@ -162,6 +236,65 @@ internal class CPU
     }
 
     /// <summary>
+    /// Sets variable register X to the value of variable register Y
+    /// </summary>
+    /// <param name="X">Variable register X</param>
+    /// <param name="Y">Variable register Y</param>
+    private void Op_8XY0(int X, int Y)
+    {
+        VariableRegisters[X] = VariableRegisters[Y];
+    }
+
+    private void Op_8XY1(int X, int Y)
+    {
+        VariableRegisters[X] |= VariableRegisters[Y];
+    }
+
+    private void Op_8XY2(int X, int Y)
+    {
+        VariableRegisters[X] &= VariableRegisters[Y];
+    }
+
+    private void Op_8XY3(int X, int Y)
+    {
+        VariableRegisters[X] ^= VariableRegisters[Y];
+    }
+
+    private void Op_8XY4(int X, int Y)
+    {
+        VariableRegisters[X] += VariableRegisters[Y];
+        if (VariableRegisters[X] > 255)
+        {
+            VariableRegisters[0xF] = 1;
+            VariableRegisters[X] %= 256;
+        }
+        else
+        {
+            VariableRegisters[0xF] = 0;
+        }
+    }
+
+    private void Op_8XY5(int X, int Y)
+    {
+        VariableRegisters[X] -= VariableRegisters[Y];
+    }
+
+    private void Op_8XY6(int X, int Y)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void Op_8XY7(int X, int Y)
+    {
+        VariableRegisters[X] = VariableRegisters[Y] - VariableRegisters[X];
+    }
+
+    private void Op_8XYE(int X, int Y)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// Skips one instruction if the value in VX does not equal the value in VY.
     /// </summary>
     /// <param name="X">Variable register at X.</param>
@@ -181,6 +314,16 @@ internal class CPU
     private void Op_ANNN(int NNN)
     {
         IndexRegister = NNN;
+    }
+
+    private void Op_BNNN(int NNN)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void Op_CXNN(int X, int NN)
+    {
+        throw new NotImplementedException();
     }
 
     private void Op_DXYN(int X, int Y, int N)

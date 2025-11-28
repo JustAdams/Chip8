@@ -29,7 +29,7 @@ namespace Chip8
 
                 // Draw to the screen
                 display.DrawDisplay();
-                Thread.Sleep(200);
+              //  Thread.Sleep(200);
             }
             Console.WriteLine("Goodbye!");
         }
