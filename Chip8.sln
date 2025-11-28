@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8", "Chip8\Chip8.csproj", "{2A18666D-473C-45D8-A06C-C286AA9B9805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8Tests", "Chip8Tests\Chip8Tests.csproj", "{02F8A8FD-26F2-4B39-A938-74D8D809A495}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A18666D-473C-45D8-A06C-C286AA9B9805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A18666D-473C-45D8-A06C-C286AA9B9805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A18666D-473C-45D8-A06C-C286AA9B9805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A18666D-473C-45D8-A06C-C286AA9B9805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02F8A8FD-26F2-4B39-A938-74D8D809A495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02F8A8FD-26F2-4B39-A938-74D8D809A495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02F8A8FD-26F2-4B39-A938-74D8D809A495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02F8A8FD-26F2-4B39-A938-74D8D809A495}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FB929C6-9F6A-48B8-963A-C5C9A22D31D8}
+	EndGlobalSection
+EndGlobal
