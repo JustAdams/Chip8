@@ -65,7 +65,7 @@ internal class CPU
                         Op_00E0();
                         break;
                     case 0xE:
-                        Op_00EE(); 
+                        Op_00EE();
                         break;
                     default:
                         throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
@@ -231,8 +231,14 @@ internal class CPU
     /// <param name="NN">Value to add to VX.</param>
     private void Op_7XNN(int X, int NN)
     {
-        // TODO - doing a modulo here to simulate overflow since we are using integers.
-        VariableRegisters[X] += NN % 256;
+        VariableRegisters[X] += NN;
+        // Set carry flag VF if there's overflow
+        if (VariableRegisters[X] > 255)
+        {
+            VariableRegisters[0xF] = 1;
+            // Doing a modulo here to simulate overflow since we are using integers.
+            VariableRegisters[X] %= 256;
+        }
     }
 
     /// <summary>
@@ -345,5 +351,19 @@ internal class CPU
                 display.SetPixel(yPos, xPos, bit);
             }
         }
+    }
+
+    /// <summary>
+    /// Stops executing instructions and loops until there is a key input.
+    /// </summary>
+    private void Op_FX0A(int X)
+    {
+        if (VariableRegisters[X] == 0x0)
+        {
+            ProgramCounter -= 2;
+        }
+
+        // todo: if a key is pressed while waiting for input, put hex value in VX and continue execution
+
     }
 }
