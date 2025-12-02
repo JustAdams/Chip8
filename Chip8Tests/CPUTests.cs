@@ -8,14 +8,14 @@ public class CPUTests
 {
     Memory memory;
     // todo: this should be a test display
-    IDisplay display;
+    DisplayBuffer display;
     CPU cpu;
 
     [SetUp]
     public void Setup()
     {
         memory = new Memory();
-        display = new TestDisplay();
+        display = new DisplayBuffer();
         cpu = new CPU(memory, display);
     }
 

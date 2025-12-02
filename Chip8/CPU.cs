@@ -10,7 +10,7 @@ namespace Chip8;
 internal class CPU
 {
     private Memory memory;
-    IDisplay display;
+    private DisplayBuffer display;
 
     /// <summary>
     /// Current instruction in memory.
@@ -28,7 +28,7 @@ internal class CPU
 
     public Stack<int> Subroutines { get; private set; }
 
-    public CPU(Memory memory, IDisplay display)
+    public CPU(Memory memory, DisplayBuffer display)
     {
         this.memory = memory;
         this.display = display;
@@ -151,7 +151,7 @@ internal class CPU
     /// </summary>
     private void Op_00E0()
     {
-        display.ClearDisplay();
+        display.Clear();
     }
 
     private void Op_00EE()
@@ -348,7 +348,7 @@ internal class CPU
                 int xPos = (VariableRegisters[X] + col) % 64;
 
                 bool bit = (spriteByte >> (7 - col) & 1) == 1;
-                display.SetPixel(yPos, xPos, bit);
+                display.SetPixel(xPos, yPos, bit);
             }
         }
     }
