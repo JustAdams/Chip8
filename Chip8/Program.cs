@@ -29,7 +29,7 @@ internal class Program
 
 
             // Draw to the screen
-            display.DrawDisplay();
+           // display.DrawDisplay();
 
           //  Thread.Sleep(200);
         }

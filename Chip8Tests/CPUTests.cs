@@ -60,6 +60,40 @@ public class CPUTests
     }
 
     [Test]
+    public void Op_8XY6_Success()
+    {
+        int inputVal = 0xAB;
+        cpu.VariableRegisters[0x4] = inputVal;
+
+        int expectedVal = 0x55;
+
+        int[] load = { 0x83, 0x46 };
+        memory.LoadMemory(load, cpu.ProgramCounter);
+
+        Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
+        cpu.Cycle();
+        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(inputVal & 0xF000));
+        Assert.That(cpu.VariableRegisters[0x3], Is.EqualTo(expectedVal), "VX was not set to VY and shifted left 1");
+    }
+
+    [Test]
+    public void Op_8XYE_Success()
+    {
+        int inputVal = 0xAB;
+        cpu.VariableRegisters[0x4] = inputVal;
+
+        int expectedVal = 0x156;
+
+        int[] load = { 0x83, 0x4E };
+        memory.LoadMemory(load, cpu.ProgramCounter);
+
+        Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
+        cpu.Cycle();
+        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(inputVal & 0xF000));
+        Assert.That(cpu.VariableRegisters[0x3], Is.EqualTo(expectedVal), "VX was not set to VY and shifted left 1");
+    }
+
+    [Test]
     public void Op_ANNN_Success()
     {
         int[] load = { 0xA3, 0xAA };

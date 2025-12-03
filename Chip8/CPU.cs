@@ -39,6 +39,9 @@ internal class CPU
         Subroutines = new Stack<int>();
     }
 
+    /// <summary>
+    /// Fetches the next instruction set from memory and executes it.
+    /// </summary>
     public void Cycle()
     {
         OpCode opCode = FetchInstruction();
@@ -56,6 +59,7 @@ internal class CPU
 
     private void ExecuteInstruction(OpCode opCode)
     {
+        // todo: maybe a better way to handle all of these opcodes instead of a big switch case
         switch (opCode.F)
         {
             case 0x0:
@@ -140,6 +144,22 @@ internal class CPU
                 break;
             case 0xD:
                 Op_DXYN(opCode.X, opCode.Y, opCode.N);
+                break;
+            case 0xF:
+                switch (opCode.Y)
+                {
+                    case 0x3:
+                        Op_FX33(opCode.X);
+                        break;
+                    case 0x5:
+                        Op_FX55(opCode.X);
+                        break;
+                    case 0x6:
+                        Op_FX65(opCode.X);
+                        break;
+                    default:
+                        throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
+                }
                 break;
             default:
                 throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
@@ -287,7 +307,9 @@ internal class CPU
 
     private void Op_8XY6(int X, int Y)
     {
-        throw new NotImplementedException();
+        VariableRegisters[X] = VariableRegisters[Y];
+        //  VariableRegisters[0xF] = VariableRegisters[X] & 0xF000;
+        VariableRegisters[X] >>= 1;
     }
 
     private void Op_8XY7(int X, int Y)
@@ -297,7 +319,9 @@ internal class CPU
 
     private void Op_8XYE(int X, int Y)
     {
-        throw new NotImplementedException();
+        VariableRegisters[X] = VariableRegisters[Y];
+        //  VariableRegisters[0xF] = VariableRegisters[X] & 0xF000;
+        VariableRegisters[X] <<= 1;
     }
 
     /// <summary>
@@ -365,5 +389,45 @@ internal class CPU
 
         // todo: if a key is pressed while waiting for input, put hex value in VX and continue execution
 
+    }
+
+    /// <summary>
+    /// Takes the number in VX and converts to three decimal digits, and stores each individual value in successive memory starting at the index register location.
+    /// e.g. 156 => memory[i] = 1, memory[i + 1] = 5, memory[i + 2] 6;
+    /// </summary>
+    /// <param name="X"></param>
+    private void Op_FX33(int X)
+    {
+        int val = VariableRegisters[X];
+
+        for (int i = 2; i >= 0; i--)
+        {
+            memory.RAM[IndexRegister + i] = val % 10;
+            val /= 10;
+        }
+    }
+
+    /// <summary>
+    /// The value of each variable register from V0 to VX will be stored in successive memory addresses starting at the index register.
+    /// </summary>
+    /// <param name="X"></param>
+    private void Op_FX55(int X)
+    {
+        for (int i = 0; i <= X; i++)
+        {
+            memory.RAM[IndexRegister + i] = VariableRegisters[i];
+        }
+    }
+
+    /// <summary>
+    /// The value of each memory location starting from the index register 0 to X will be stored in the variable registers starting at V0.
+    /// </summary>
+    /// <param name="X"></param>
+    private void Op_FX65(int X)
+    {
+        for (int i = 0; i <= X; i++)
+        {
+            VariableRegisters[i] = memory.RAM[IndexRegister + i];
+        }
     }
 }
