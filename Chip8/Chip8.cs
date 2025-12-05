@@ -36,4 +36,16 @@ public class Chip8
     {
         _cpu.Cycle();
     }
+
+    public void KeyDown(int currKey)
+    {
+        _cpu.KeyPressed = true;
+        _cpu.CurrentKey = currKey;
+    }
+
+    public void KeyUp()
+    {
+        _cpu.KeyPressed = false;
+        _cpu.CurrentKey = 0;
+    }
 }

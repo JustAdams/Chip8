@@ -4,11 +4,6 @@ namespace Chip8Tests.Common;
 
 public class OPCodeTests
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
-
     [Test]
     public void Constructor_Success()
     {

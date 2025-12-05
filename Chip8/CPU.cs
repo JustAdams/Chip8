@@ -11,6 +11,10 @@ internal class CPU
 {
     private Memory memory;
     private DisplayBuffer display;
+    private Random _random;
+
+    public bool KeyPressed { get; set; }
+    public int CurrentKey { get; set; }
 
     /// <summary>
     /// Current instruction in memory.
@@ -32,6 +36,8 @@ internal class CPU
     {
         this.memory = memory;
         this.display = display;
+
+        _random = new Random();
 
         ProgramCounter = 0x200;
 
@@ -106,32 +112,26 @@ internal class CPU
                         Op_8XY1(opCode.X, opCode.Y);
                         break;
                     case 0x2:
-
                         Op_8XY2(opCode.X, opCode.Y);
                         break;
                     case 0x3:
-
                         Op_8XY3(opCode.X, opCode.Y);
                         break;
                     case 0x4:
-
                         Op_8XY4(opCode.X, opCode.Y);
                         break;
                     case 0x5:
-
                         Op_8XY5(opCode.X, opCode.Y);
                         break;
                     case 0x6:
                         Op_8XY6(opCode.X, opCode.Y);
                         break;
                     case 0x7:
-
                         Op_8XY7(opCode.X, opCode.Y);
                         break;
                     case 0xE:
                         Op_8XYE(opCode.X, opCode.Y);
                         break;
-
                     default:
                         throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
                 }
@@ -142,12 +142,36 @@ internal class CPU
             case 0xA:
                 Op_ANNN(opCode.NNN);
                 break;
+            case 0xB:
+                Op_BNNN(opCode.NNN);
+                break;
+            case 0xC:
+                Op_CXNN(opCode.X, opCode.NN);
+                break;
             case 0xD:
                 Op_DXYN(opCode.X, opCode.Y, opCode.N);
+                break;
+            case 0xE:
+                switch (opCode.Y)
+                {
+                    case 0x9:
+                        Op_EX9E(opCode.X);
+                        break;
+                    case 0xA:
+                        Op_EXA1(opCode.X);
+                        break;
+                        throw new NotImplementedException("OpCode not supported: " + opCode.ToString());
+                }
                 break;
             case 0xF:
                 switch (opCode.Y)
                 {
+                    case 0x0:
+                        Op_FX0A(opCode.X);
+                        break;
+                    case 0x1:
+                        Op_FX1E(opCode.X);
+                        break;
                     case 0x3:
                         Op_FX33(opCode.X);
                         break;
@@ -302,19 +326,26 @@ internal class CPU
 
     private void Op_8XY5(int X, int Y)
     {
-        VariableRegisters[X] -= VariableRegisters[Y];
+        if (VariableRegisters[X] > VariableRegisters[Y])
+        {
+            VariableRegisters[0xF] = 1;
+        } else
+        {
+            VariableRegisters[0xF] = 0;
+        }
+        VariableRegisters[X] = (VariableRegisters[X] - VariableRegisters[Y]) & 0xFF;
     }
 
     private void Op_8XY6(int X, int Y)
     {
         VariableRegisters[X] = VariableRegisters[Y];
-        //  VariableRegisters[0xF] = VariableRegisters[X] & 0xF000;
+        VariableRegisters[0xF] = (VariableRegisters[X] & 0x1) == 1 ? 1 : 0;
         VariableRegisters[X] >>= 1;
     }
 
     private void Op_8XY7(int X, int Y)
     {
-        VariableRegisters[X] = VariableRegisters[Y] - VariableRegisters[X];
+        VariableRegisters[X] = (VariableRegisters[Y] - VariableRegisters[X]) & 0xFF;
     }
 
     private void Op_8XYE(int X, int Y)
@@ -348,12 +379,19 @@ internal class CPU
 
     private void Op_BNNN(int NNN)
     {
-        throw new NotImplementedException();
+        ProgramCounter = NNN + VariableRegisters[0x0];
     }
 
+    /// <summary>
+    /// Generates a random number, ANDs it with NN, and puts value in VX.
+    /// </summary>
+    /// <param name="X">Variable register to store the value in.</param>
+    /// <param name="NN">Value that the random number will be ANDed with.</param>
+    /// <exception cref="NotImplementedException"></exception>
     private void Op_CXNN(int X, int NN)
     {
-        throw new NotImplementedException();
+        int randNum = _random.Next(0xF) & NN;
+        VariableRegisters[X] = randNum;
     }
 
     private void Op_DXYN(int X, int Y, int N)
@@ -377,17 +415,33 @@ internal class CPU
         }
     }
 
+    private void Op_EX9E(int X)
+    {
+        if (VariableRegisters[X] == CurrentKey)
+        {
+            ProgramCounter += 2;
+        }
+    }
+
+    private void Op_EXA1(int X)
+    {
+        if (VariableRegisters[X] != CurrentKey)
+        {
+            ProgramCounter += 2;
+        }
+    }
+
     /// <summary>
     /// Stops executing instructions and loops until there is a key input.
     /// </summary>
     private void Op_FX0A(int X)
     {
-        if (VariableRegisters[X] == 0x0)
+        if (!KeyPressed)
         {
             ProgramCounter -= 2;
         }
 
-        // todo: if a key is pressed while waiting for input, put hex value in VX and continue execution
+        VariableRegisters[X] = CurrentKey;
 
     }
 
@@ -417,6 +471,11 @@ internal class CPU
         {
             memory.RAM[IndexRegister + i] = VariableRegisters[i];
         }
+    }
+
+    private void Op_FX1E(int X)
+    {
+        IndexRegister += VariableRegisters[X];
     }
 
     /// <summary>

@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 
 namespace Chip8.Monogame;
 
@@ -11,18 +13,40 @@ public class Game1 : Core
     const int width = 32;
     const int scale = 10;
 
-    Color onColor = Color.Black;
-    Color offColor = Color.White;
+    Color onColor = Color.White;
+    Color offColor = Color.Black;
     
     Chip8 chip8;
 
     private Color[] colorBuffer;
     private Texture2D _displayTexture;
 
+    public Dictionary<Keys, int> InputMap { get; init; }
+
     public Game1() : base("Chip 8 Emulator", height * scale, width * scale, false)
     {
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        InputMap = new Dictionary<Keys, int>()
+        {
+            { Keys.D1, 0x1 },
+            { Keys.D2, 0x2 },
+            { Keys.D3, 0x3 },
+            { Keys.NumPad4, 0xC },
+            { Keys.Q, 0x4 },
+            { Keys.W, 0x5 },
+            { Keys.E, 0x6 },
+            { Keys.R, 0xD },
+            { Keys.A, 0x7 },
+            { Keys.S, 0x8 },
+            { Keys.D, 0x9 },
+            { Keys.F, 0xE },
+            { Keys.Z, 0xA },
+            { Keys.X, 0x0 },
+            { Keys.C, 0xB },
+            { Keys.V, 0xF },
+        };
     }
 
     protected override void Initialize()
@@ -38,7 +62,7 @@ public class Game1 : Core
     {
 
         chip8 = new Chip8();
-        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\test_opcode.ch8");
+        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\mySnake.ch8");
 
         chip8.LoadROM(rom);
 
@@ -50,6 +74,7 @@ public class Game1 : Core
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
+        GetUserInput();
         chip8.Cycle();
 
         base.Update(gameTime);
@@ -63,7 +88,7 @@ public class Game1 : Core
         UpdateDisplay();
 
         SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        SpriteBatch.Draw(_displayTexture, new Rectangle(0, 0, 64 * 10, 32 * 10), offColor);
+        SpriteBatch.Draw(_displayTexture, new Rectangle(0, 0, 64 * 10, 32 * 10), Color.LightGreen);
         SpriteBatch.End();
 
         base.Draw(gameTime);
@@ -76,5 +101,21 @@ public class Game1 : Core
             colorBuffer[i] = chip8.Display.Pixels[i] ? onColor : offColor;
         }
         _displayTexture.SetData(colorBuffer);
+    }
+
+    private void GetUserInput()
+    {
+        int currKey = 0x0;
+
+        KeyboardState keyboardState = Keyboard.GetState();
+        if (keyboardState.GetPressedKeyCount() == 0)
+        {
+            chip8.KeyUp();
+            return;
+        }
+
+        chip8.KeyDown(InputMap[keyboardState.GetPressedKeys()[0]]);
+
+        currKey = InputMap[keyboardState.GetPressedKeys()[0]];
     }
 }
