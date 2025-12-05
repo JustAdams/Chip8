@@ -23,8 +23,8 @@ public class CPUTests
     public void Op_1NNN_Success()
     {
         // loading instruction set that should jump the PC to 0xAB3
-        int expectedAddress = 0xAB3;
-        int[] load = { 0x1A, 0xB3 };
+        ushort expectedAddress = 0xAB3;
+        byte[] load = { 0x1A, 0xB3 };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.ProgramCounter, Is.EqualTo(0x200), "Program counter isn't set to default of 0x200 at the start.");
@@ -36,7 +36,7 @@ public class CPUTests
     public void Op_6XNN_Success()
     {
         // loading instruction set that should set var reg 3 to 0x4A
-        int[] load = { 0x63, 0x4A };
+        byte[] load = { 0x63, 0x4A };
         int register = 0x3;
         memory.LoadMemory(load, cpu.ProgramCounter);
 
@@ -49,7 +49,7 @@ public class CPUTests
     public void Op_7XNN_Success()
     {
         // loading two instruction sets that should add 3 and 4 to the var register 3
-        int[] load = { 0x73, 0x03, 0x73, 0x04 };
+        byte[] load = { 0x73, 0x03, 0x73, 0x04 };
         int register = 0x3;
         memory.LoadMemory(load, cpu.ProgramCounter);
 
@@ -62,12 +62,12 @@ public class CPUTests
     [Test]
     public void Op_8XY6_Success()
     {
-        int inputVal = 0xAB;
+        byte inputVal = 0xAB;
         cpu.VariableRegisters[0x4] = inputVal;
 
         int expectedVal = 0x55;
 
-        int[] load = { 0x83, 0x46 };
+        byte[] load = { 0x83, 0x46 };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
@@ -79,12 +79,12 @@ public class CPUTests
     [Test]
     public void Op_8XYE_Success()
     {
-        int inputVal = 0xAB;
+        byte inputVal = 0xAB;
         cpu.VariableRegisters[0x4] = inputVal;
 
         int expectedVal = 0x156;
 
-        int[] load = { 0x83, 0x4E };
+        byte[] load = { 0x83, 0x4E };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
@@ -96,7 +96,7 @@ public class CPUTests
     [Test]
     public void Op_ANNN_Success()
     {
-        int[] load = { 0xA3, 0xAA };
+        byte[] load = { 0xA3, 0xAA };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.IndexRegister, Is.EqualTo(0x0), "Index register isn't set to default of 0 at the start.");

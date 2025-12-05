@@ -28,7 +28,7 @@ internal class CPU
     /// <summary>
     /// 16 8-bit general-purpose variable registers labeled 0 - F.
     /// </summary>
-    public int[] VariableRegisters { get; private set; }
+    public byte[] VariableRegisters { get; private set; }
 
     public Stack<int> Subroutines { get; private set; }
 
@@ -41,7 +41,7 @@ internal class CPU
 
         ProgramCounter = 0x200;
 
-        VariableRegisters = new int[16];
+        VariableRegisters = new byte[16];
         Subroutines = new Stack<int>();
     }
 
@@ -263,7 +263,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">VX register.</param>
     /// <param name="NN">Value to set VX to.</param>
-    private void Op_6XNN(int X, int NN)
+    private void Op_6XNN(int X, byte NN)
     {
         VariableRegisters[X] = NN;
     }
@@ -273,7 +273,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">VX register.</param>
     /// <param name="NN">Value to add to VX.</param>
-    private void Op_7XNN(int X, int NN)
+    private void Op_7XNN(int X, byte NN)
     {
         VariableRegisters[X] += NN;
         // Set carry flag VF if there's overflow
@@ -281,7 +281,7 @@ internal class CPU
         {
             VariableRegisters[0xF] = 1;
             // Doing a modulo here to simulate overflow since we are using integers.
-            VariableRegisters[X] %= 256;
+            VariableRegisters[X] %= 255;
         }
     }
 
@@ -316,7 +316,7 @@ internal class CPU
         if (VariableRegisters[X] > 255)
         {
             VariableRegisters[0xF] = 1;
-            VariableRegisters[X] %= 256;
+            VariableRegisters[X] %= 255;
         }
         else
         {
@@ -333,19 +333,19 @@ internal class CPU
         {
             VariableRegisters[0xF] = 0;
         }
-        VariableRegisters[X] = (VariableRegisters[X] - VariableRegisters[Y]) & 0xFF;
+        VariableRegisters[X] = (byte)((VariableRegisters[X] - VariableRegisters[Y]) & 0xFF);
     }
 
     private void Op_8XY6(int X, int Y)
     {
         VariableRegisters[X] = VariableRegisters[Y];
-        VariableRegisters[0xF] = (VariableRegisters[X] & 0x1) == 1 ? 1 : 0;
+        VariableRegisters[0xF] = (byte)((VariableRegisters[X] & 0x1) == 1 ? 1 : 0);
         VariableRegisters[X] >>= 1;
     }
 
     private void Op_8XY7(int X, int Y)
     {
-        VariableRegisters[X] = (VariableRegisters[Y] - VariableRegisters[X]) & 0xFF;
+        VariableRegisters[X] = (byte)((VariableRegisters[Y] - VariableRegisters[X]) & 0xFF);
     }
 
     private void Op_8XYE(int X, int Y)
@@ -390,7 +390,7 @@ internal class CPU
     /// <exception cref="NotImplementedException"></exception>
     private void Op_CXNN(int X, int NN)
     {
-        int randNum = _random.Next(0xF) & NN;
+        byte randNum = (byte)(_random.Next(0xF) & NN);
         VariableRegisters[X] = randNum;
     }
 
@@ -417,18 +417,12 @@ internal class CPU
 
     private void Op_EX9E(int X)
     {
-        if (VariableRegisters[X] == CurrentKey)
-        {
-            ProgramCounter += 2;
-        }
+
     }
 
     private void Op_EXA1(int X)
     {
-        if (VariableRegisters[X] != CurrentKey)
-        {
-            ProgramCounter += 2;
-        }
+
     }
 
     /// <summary>
@@ -441,7 +435,7 @@ internal class CPU
             ProgramCounter -= 2;
         }
 
-        VariableRegisters[X] = CurrentKey;
+     
 
     }
 
@@ -456,7 +450,7 @@ internal class CPU
 
         for (int i = 2; i >= 0; i--)
         {
-            memory.RAM[IndexRegister + i] = val % 10;
+            memory.RAM[IndexRegister + i] = (byte)(val % 10);
             val /= 10;
         }
     }
