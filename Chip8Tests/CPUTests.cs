@@ -1,6 +1,4 @@
 ﻿using Chip8;
-using Chip8.Common;
-using Chip8Tests.Mocks;
 
 namespace Chip8Tests;
 

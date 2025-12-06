@@ -326,7 +326,8 @@ internal class CPU
         if (VariableRegisters[X] > VariableRegisters[Y])
         {
             VariableRegisters[0xF] = 1;
-        } else
+        }
+        else
         {
             VariableRegisters[0xF] = 0;
         }
@@ -438,7 +439,7 @@ internal class CPU
             ProgramCounter -= 2;
         }
 
-     
+
 
     }
 

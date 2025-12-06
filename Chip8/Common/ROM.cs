@@ -2,7 +2,7 @@
 {
     public class ROM
     {
-        public byte[] Data {  get; init; }
+        public byte[] Data { get; init; }
 
         public ROM(string romPath)
         {

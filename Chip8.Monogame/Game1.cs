@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 
 namespace Chip8.Monogame;
@@ -15,7 +14,7 @@ public class Game1 : Core
 
     Color onColor = Color.White;
     Color offColor = Color.Black;
-    
+
     Chip8 chip8;
 
     private Color[] colorBuffer;
@@ -83,7 +82,7 @@ public class Game1 : Core
     protected override void Draw(GameTime gameTime)
     {
         // might not want to clear the display each update, since chip8 purposely flips the display bit
-       // GraphicsDevice.Clear(offColor);
+        // GraphicsDevice.Clear(offColor);
 
         UpdateDisplay();
 

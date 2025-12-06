@@ -5,7 +5,7 @@
 /// </summary>
 public sealed class DisplayBuffer
 {
-    public const int WIDTH  = 64;
+    public const int WIDTH = 64;
     public const int HEIGHT = 32;
 
     public bool[] Pixels { get; } = new bool[WIDTH * HEIGHT];

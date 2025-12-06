@@ -33,7 +33,7 @@ public class MemoryTests
         byte[] load = { 0xAB, 0xA2 };
         int instructionPos = 0xAF;
         memory.LoadMemory(load, instructionPos);
-        
+
         OpCode opCode = memory.GetInstruction(instructionPos);
 
 
