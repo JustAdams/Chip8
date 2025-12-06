@@ -1,6 +1,6 @@
 # Chip8
 
-Chip 8 is a simple virtual machine which can read chip 8 programs.
+Chip 8 is a simple virtual machine which can read and execute .ch8 programs.
 
 References
 https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
