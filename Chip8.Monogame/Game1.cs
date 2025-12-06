@@ -32,7 +32,7 @@ public class Game1 : Core
             { Keys.D1, 0x1 },
             { Keys.D2, 0x2 },
             { Keys.D3, 0x3 },
-            { Keys.NumPad4, 0xC },
+            { Keys.D4, 0xC },
             { Keys.Q, 0x4 },
             { Keys.W, 0x5 },
             { Keys.E, 0x6 },
@@ -61,7 +61,7 @@ public class Game1 : Core
     {
 
         chip8 = new Chip8();
-        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\test_opcode.ch8");
+        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\mySnake.ch8");
 
         chip8.LoadROM(rom);
 

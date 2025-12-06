@@ -25,7 +25,7 @@ public class Core : Game
         s_Instance = this;
 
         Graphics = new GraphicsDeviceManager(this);
-
+        TargetElapsedTime = new TimeSpan(15000);
         // Set graphics defaults
         Graphics.PreferredBackBufferWidth = width;
         Graphics.PreferredBackBufferHeight = height;

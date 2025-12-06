@@ -32,10 +32,35 @@ internal class Memory
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
+    /// <summary>
+    /// Starting font location in memory for a given hexadecimal character.
+    /// </summary>
+    public Dictionary<byte, byte> FontLocation { get; init; }
+
     public Memory()
     {
         RAM = new byte[4096];
         LoadMemory(fonts, 0x050);
+
+        FontLocation = new Dictionary<byte, byte>()
+        {
+            { 0x0, 0x50 }, // 0
+            { 0x1, 0x55 }, // 1
+            { 0x2, 0x60 }, // 2
+            { 0x3, 0x65 }, // 3
+            { 0x4, 0x70 }, // 4
+            { 0x5, 0x75 }, // 5
+            { 0x6, 0x80 }, // 6
+            { 0x7, 0x85 }, // 7
+            { 0x8, 0x90 }, // 8
+            { 0x9, 0x95 }, // 9
+            { 0xA, 0x9A }, // A
+            { 0xB, 0x9F }, // B
+            { 0xC, 0xA4 }, // C
+            { 0xD, 0xA9 }, // D
+            { 0xE, 0xAE }, // E
+            { 0xF, 0xB3 }, // F
+        };
     }
 
     public void LoadMemory(byte[] load, int startPos)

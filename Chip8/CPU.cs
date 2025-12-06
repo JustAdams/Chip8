@@ -32,6 +32,9 @@ internal class CPU
 
     public Stack<int> Subroutines { get; private set; }
 
+    private byte _delayTimer;
+    private byte _soundTimer;
+
     public CPU(Memory memory, DisplayBuffer display)
     {
         this.memory = memory;
@@ -43,6 +46,8 @@ internal class CPU
 
         VariableRegisters = new byte[16];
         Subroutines = new Stack<int>();
+
+        _delayTimer = 0x3C;
     }
 
     /// <summary>
@@ -52,6 +57,7 @@ internal class CPU
     {
         OpCode opCode = FetchInstruction();
         ExecuteInstruction(opCode);
+        _delayTimer--;
     }
 
     private OpCode FetchInstruction()
@@ -164,21 +170,33 @@ internal class CPU
                 }
                 break;
             case 0xF:
-                switch (opCode.Y)
+                switch (opCode.NN)
                 {
-                    case 0x0:
+                    case 0x07:
+                        Op_FX07(opCode.X);
+                        break;
+                    case 0x0A:
                         Op_FX0A(opCode.X);
                         break;
-                    case 0x1:
+                    case 0x15:
+                        Op_FX15(opCode.X);
+                        break;
+                    case 0x18:
+                        Op_FX18(opCode.X);
+                        break;
+                    case 0x1E:
                         Op_FX1E(opCode.X);
                         break;
-                    case 0x3:
+                    case 0x29:
+                        Op_FX29(opCode.X);
+                        break;
+                    case 0x33:
                         Op_FX33(opCode.X);
                         break;
-                    case 0x5:
+                    case 0x55:
                         Op_FX55(opCode.X);
                         break;
-                    case 0x6:
+                    case 0x65:
                         Op_FX65(opCode.X);
                         break;
                     default:
@@ -237,7 +255,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">Variable register at X.</param>
     /// <param name="NN">Value to compare against.</param>
-    private void Op_4XNN(int X, int NN)
+    private void Op_4XNN(byte X, byte NN)
     {
         if (VariableRegisters[X] != NN)
         {
@@ -250,7 +268,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">Variable register at X.</param>
     /// <param name="Y">Variable register at Y.</param>
-    private void Op_5XY0(int X, int Y)
+    private void Op_5XY0(byte X, byte Y)
     {
         if (VariableRegisters[X] == VariableRegisters[Y])
         {
@@ -263,7 +281,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">VX register.</param>
     /// <param name="NN">Value to set VX to.</param>
-    private void Op_6XNN(int X, byte NN)
+    private void Op_6XNN(byte X, byte NN)
     {
         VariableRegisters[X] = NN;
     }
@@ -273,7 +291,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">VX register.</param>
     /// <param name="NN">Value to add to VX.</param>
-    private void Op_7XNN(int X, byte NN)
+    private void Op_7XNN(byte X, byte NN)
     {
         if (VariableRegisters[X] + NN > 255)
         {
@@ -287,27 +305,27 @@ internal class CPU
     /// </summary>
     /// <param name="X">Variable register X</param>
     /// <param name="Y">Variable register Y</param>
-    private void Op_8XY0(int X, int Y)
+    private void Op_8XY0(byte X, byte Y)
     {
         VariableRegisters[X] = VariableRegisters[Y];
     }
 
-    private void Op_8XY1(int X, int Y)
+    private void Op_8XY1(byte X, byte Y)
     {
         VariableRegisters[X] |= VariableRegisters[Y];
     }
 
-    private void Op_8XY2(int X, int Y)
+    private void Op_8XY2(byte X, byte Y)
     {
         VariableRegisters[X] &= VariableRegisters[Y];
     }
 
-    private void Op_8XY3(int X, int Y)
+    private void Op_8XY3(byte X, byte Y)
     {
         VariableRegisters[X] ^= VariableRegisters[Y];
     }
 
-    private void Op_8XY4(int X, int Y)
+    private void Op_8XY4(byte X, byte Y)
     {
         VariableRegisters[X] += VariableRegisters[Y];
         if (VariableRegisters[X] > 255)
@@ -321,7 +339,7 @@ internal class CPU
         }
     }
 
-    private void Op_8XY5(int X, int Y)
+    private void Op_8XY5(byte X, byte Y)
     {
         if (VariableRegisters[X] > VariableRegisters[Y])
         {
@@ -364,7 +382,7 @@ internal class CPU
     /// </summary>
     /// <param name="X">Variable register at X.</param>
     /// <param name="Y">Variable register at Y.</param>
-    private void Op_9XY0(int X, int Y)
+    private void Op_9XY0(byte X, byte Y)
     {
         if (VariableRegisters[X] != VariableRegisters[Y])
         {
@@ -392,13 +410,13 @@ internal class CPU
     /// <param name="X">Variable register to store the value in.</param>
     /// <param name="NN">Value that the random number will be ANDed with.</param>
     /// <exception cref="NotImplementedException"></exception>
-    private void Op_CXNN(int X, int NN)
+    private void Op_CXNN(byte X, byte NN)
     {
         byte randNum = (byte)(_random.Next(0xF) & NN);
         VariableRegisters[X] = randNum;
     }
 
-    private void Op_DXYN(int X, int Y, int N)
+    private void Op_DXYN(byte X, byte Y, byte N)
     {
         for (int row = 0; row < N; row++)
         {
@@ -419,28 +437,37 @@ internal class CPU
         }
     }
 
-    private void Op_EX9E(int X)
+    private void Op_EX9E(byte X)
     {
 
     }
 
-    private void Op_EXA1(int X)
+    private void Op_EXA1(byte X)
     {
 
+    }
+
+    private void Op_FX07(byte X)
+    {
+        VariableRegisters[X] = _delayTimer;
     }
 
     /// <summary>
     /// Stops executing instructions and loops until there is a key input.
     /// </summary>
-    private void Op_FX0A(int X)
+    private void Op_FX0A(byte X)
     {
         if (!KeyPressed)
         {
             ProgramCounter -= 2;
+            return;
         }
+        VariableRegisters[X] = CurrentKey;
+    }
 
-
-
+    private void Op_FX15(int X)
+    {
+        _delayTimer = VariableRegisters[X];
     }
 
     /// <summary>
@@ -448,7 +475,7 @@ internal class CPU
     /// e.g. 156 => memory[i] = 1, memory[i + 1] = 5, memory[i + 2] 6;
     /// </summary>
     /// <param name="X"></param>
-    private void Op_FX33(int X)
+    private void Op_FX33(byte X)
     {
         int val = VariableRegisters[X];
 
@@ -463,7 +490,7 @@ internal class CPU
     /// The value of each variable register from V0 to VX will be stored in successive memory addresses starting at the index register.
     /// </summary>
     /// <param name="X"></param>
-    private void Op_FX55(int X)
+    private void Op_FX55(byte X)
     {
         for (int i = 0; i <= X; i++)
         {
@@ -471,16 +498,31 @@ internal class CPU
         }
     }
 
-    private void Op_FX1E(int X)
+    private void Op_FX18(byte X)
+    {
+        _soundTimer = VariableRegisters[X];
+    }
+
+    private void Op_FX1E(byte X)
     {
         IndexRegister += VariableRegisters[X];
+    }
+
+    /// <summary>
+    /// Sets the index register to the address of the hexadecimal character in VX.
+    /// </summary>
+    /// <param name="X">Memory address of the sprite data corresponding to the hexadecimal digit stored in register VX</param>
+    private void Op_FX29(byte X)
+    {
+        byte fontAddr = (byte)(VariableRegisters[X] >> 4);
+        IndexRegister = memory.FontLocation[fontAddr];
     }
 
     /// <summary>
     /// The value of each memory location starting from the index register 0 to X will be stored in the variable registers starting at V0.
     /// </summary>
     /// <param name="X"></param>
-    private void Op_FX65(int X)
+    private void Op_FX65(byte X)
     {
         for (int i = 0; i <= X; i++)
         {
