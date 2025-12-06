@@ -15,6 +15,12 @@ public sealed class DisplayBuffer
         Array.Clear(Pixels);
     }
 
+    public bool GetPixel(int x, int y)
+    {
+        int index = y * WIDTH + x;
+        return Pixels[index];
+    }
+
     /// <summary>
     /// Sets a pixel to a desired value.
     /// </summary>

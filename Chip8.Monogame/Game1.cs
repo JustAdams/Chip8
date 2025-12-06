@@ -17,6 +17,8 @@ public class Game1 : Core
 
     Chip8 chip8;
 
+    string _romPath = "C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\mySnake.ch8";
+
     private Color[] colorBuffer;
     private Texture2D _displayTexture;
 
@@ -61,7 +63,7 @@ public class Game1 : Core
     {
 
         chip8 = new Chip8();
-        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\mySnake.ch8");
+        ROM rom = new ROM(_romPath);
 
         chip8.LoadROM(rom);
 
@@ -104,8 +106,6 @@ public class Game1 : Core
 
     private void GetUserInput()
     {
-        byte currKey = 0x0;
-
         KeyboardState keyboardState = Keyboard.GetState();
         if (keyboardState.GetPressedKeyCount() == 0)
         {
@@ -114,7 +114,5 @@ public class Game1 : Core
         }
 
         chip8.KeyDown(InputMap[keyboardState.GetPressedKeys()[0]]);
-
-        currKey = InputMap[keyboardState.GetPressedKeys()[0]];
     }
 }

@@ -418,33 +418,50 @@ internal class CPU
 
     private void Op_DXYN(byte X, byte Y, byte N)
     {
+        byte xCoord = (byte)(VariableRegisters[X] & 63);
+        byte yCoord = (byte)(VariableRegisters[Y] & 31);
+        VariableRegisters[0xF] = 0x0;
+
         for (int row = 0; row < N; row++)
         {
-            int currIndex = IndexRegister + row;
-            int spriteByte = memory.RAM[currIndex];
-
-            // modulo to handle screen wrap
-            int yPos = (VariableRegisters[Y] + row) % 32;
-
+            byte spriteByte = memory.RAM[IndexRegister + row];
             for (int col = 0; col < 8; col++)
             {
-                // modulo to handle screen wrap
-                int xPos = (VariableRegisters[X] + col) % 64;
 
                 bool bit = (spriteByte >> (7 - col) & 1) == 1;
-                display.SetPixel(xPos, yPos, bit);
+
+                if (!bit)
+                {
+                    continue;
+                }
+
+                int xPos = xCoord + col;
+                int yPos = yCoord + row;
+
+                if (display.GetPixel(xPos, yPos))
+                {
+                    VariableRegisters[0xF] = 0x1;
+                }
+
+                display.FlipPixel(xPos, yPos);
             }
         }
     }
 
     private void Op_EX9E(byte X)
     {
-
+        if (CurrentKey == VariableRegisters[X])
+        {
+            ProgramCounter += 2;
+        }
     }
 
     private void Op_EXA1(byte X)
     {
-
+        if (CurrentKey != VariableRegisters[X])
+        {
+            ProgramCounter += 2;
+        }
     }
 
     private void Op_FX07(byte X)
