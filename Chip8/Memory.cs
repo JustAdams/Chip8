@@ -10,9 +10,9 @@ namespace Chip8;
 /// </summary>
 internal class Memory
 {
-    public int[] RAM { get; private set; }
+    public byte[] RAM { get; private set; }
 
-    private int[] fonts =
+    private byte[] fonts =
     {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -34,11 +34,11 @@ internal class Memory
 
     public Memory()
     {
-        RAM = new int[4096];
+        RAM = new byte[4096];
         LoadMemory(fonts, 0x050);
     }
 
-    public void LoadMemory(int[] load, int startPos)
+    public void LoadMemory(byte[] load, int startPos)
     {
         Array.Copy(load, 0, RAM, startPos, load.Length);
     }
@@ -50,7 +50,7 @@ internal class Memory
     /// <returns>OpCode</returns>
     public OpCode GetInstruction(int idx)
     {
-        int instructionSet = 0;
+        ushort instructionSet = 0;
         instructionSet += RAM[idx];
         instructionSet <<= 8;
         instructionSet += RAM[idx + 1];

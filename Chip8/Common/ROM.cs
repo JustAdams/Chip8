@@ -2,11 +2,11 @@
 {
     public class ROM
     {
-        public int[] Data {  get; init; }
+        public byte[] Data { get; init; }
 
         public ROM(string romPath)
         {
-            Data = new int[3584];
+            Data = new byte[3584];
             byte[] romBytes = File.ReadAllBytes(romPath);
             Array.Copy(romBytes, 0, Data, 0, romBytes.Length);
         }

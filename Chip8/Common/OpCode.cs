@@ -5,42 +5,42 @@ internal readonly struct OpCode
     /// <summary>
     /// First nibble
     /// </summary>
-    public int F { get; init; }
+    public byte F { get; init; }
 
     /// <summary>
     /// Second nibble
     /// </summary>
-    public int X { get; init; }
+    public byte X { get; init; }
     /// <summary>
     /// Third nibble
     /// </summary>
-    public int Y { get; init; }
+    public byte Y { get; init; }
     /// <summary>
     /// Fourth nibble
     /// </summary>
-    public int N { get; init; }
+    public byte N { get; init; }
     /// <summary>
     /// Third and fourth nibbles.
     /// </summary>
-    public int NN { get; init; }
+    public byte NN { get; init; }
     /// <summary>
     /// Second, third, and fourth nibbles.
     /// </summary>
-    public int NNN { get; init; }
+    public ushort NNN { get; init; }
 
     /// <summary>
     /// Full opcode
     /// </summary>
-    public int NNNN { get; init; }
+    public ushort NNNN { get; init; }
 
-    public OpCode(int opcode)
+    public OpCode(ushort opcode)
     {
-        F = (opcode & 0xF000) >> 12;
-        X = (opcode & 0x0F00) >> 8;
-        Y = (opcode & 0x00F0) >> 4;
-        N = opcode & 0x000F;
-        NN = opcode & 0x00FF;
-        NNN = opcode & 0x0FFF;
+        F = (byte)((opcode & 0xF000) >> 12);
+        X = (byte)((opcode & 0x0F00) >> 8);
+        Y = (byte)((opcode & 0x00F0) >> 4);
+        N = (byte)(opcode & 0x000F);
+        NN = (byte)(opcode & 0x00FF);
+        NNN = (ushort)(opcode & 0x0FFF);
         NNNN = opcode;
     }
 

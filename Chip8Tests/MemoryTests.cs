@@ -16,7 +16,7 @@ public class MemoryTests
     [Test]
     public void LoadMemory_Success()
     {
-        int[] load = { 0xFF, 0x12, 0xAB };
+        byte[] load = { 0xFF, 0x12, 0xAB };
         int startPos = 0x9;
 
         memory.LoadMemory(load, startPos);
@@ -30,10 +30,10 @@ public class MemoryTests
     public void GetInstruction_Success()
     {
         OpCode expectedOpCode = new OpCode(0xABA2);
-        int[] load = { 0xAB, 0xA2 };
+        byte[] load = { 0xAB, 0xA2 };
         int instructionPos = 0xAF;
         memory.LoadMemory(load, instructionPos);
-        
+
         OpCode opCode = memory.GetInstruction(instructionPos);
 
 
