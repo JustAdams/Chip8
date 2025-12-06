@@ -21,14 +21,14 @@ public class Game1 : Core
     private Color[] colorBuffer;
     private Texture2D _displayTexture;
 
-    public Dictionary<Keys, int> InputMap { get; init; }
+    public Dictionary<Keys, byte> InputMap { get; init; }
 
     public Game1() : base("Chip 8 Emulator", height * scale, width * scale, false)
     {
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
-        InputMap = new Dictionary<Keys, int>()
+        InputMap = new Dictionary<Keys, byte>()
         {
             { Keys.D1, 0x1 },
             { Keys.D2, 0x2 },
@@ -62,7 +62,7 @@ public class Game1 : Core
     {
 
         chip8 = new Chip8();
-        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\mySnake.ch8");
+        ROM rom = new ROM("C:\\Users\\adams\\Programming\\C#\\Chip8\\Chip8\\ROMs\\test_opcode.ch8");
 
         chip8.LoadROM(rom);
 
@@ -105,7 +105,7 @@ public class Game1 : Core
 
     private void GetUserInput()
     {
-        int currKey = 0x0;
+        byte currKey = 0x0;
 
         KeyboardState keyboardState = Keyboard.GetState();
         if (keyboardState.GetPressedKeyCount() == 0)

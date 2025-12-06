@@ -37,7 +37,7 @@ public class CPUTests
     {
         // loading instruction set that should set var reg 3 to 0x4A
         byte[] load = { 0x63, 0x4A };
-        int register = 0x3;
+        byte register = 0x3;
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x0), "Variable register X isn't set to default of 0 at the start.");
@@ -49,14 +49,15 @@ public class CPUTests
     public void Op_7XNN_Success()
     {
         // loading two instruction sets that should add 3 and 4 to the var register 3
-        byte[] load = { 0x73, 0x03, 0x73, 0x04 };
-        int register = 0x3;
+        byte[] load = { 0x73, 0x03, 0x73, 0xFF };
+        byte register = 0x3;
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x0), "Variable register X isn't set to default of 0 at the start.");
         cpu.Cycle();
         cpu.Cycle();
-        Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x07), "Variable register X isn't set to the correct value.");
+        Assert.That(cpu.VariableRegisters[register], Is.EqualTo(0x02), "Variable register X isn't set to the correct value.");
+        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(0x1), "Variable register F didn't get set to 1 after the overflow.");
     }
 
     [Test]
@@ -65,14 +66,14 @@ public class CPUTests
         byte inputVal = 0xAB;
         cpu.VariableRegisters[0x4] = inputVal;
 
-        int expectedVal = 0x55;
+        byte expectedVal = 0x55;
 
         byte[] load = { 0x83, 0x46 };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
         cpu.Cycle();
-        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(inputVal & 0xF000));
+        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(0x1));
         Assert.That(cpu.VariableRegisters[0x3], Is.EqualTo(expectedVal), "VX was not set to VY and shifted left 1");
     }
 
@@ -82,14 +83,14 @@ public class CPUTests
         byte inputVal = 0xAB;
         cpu.VariableRegisters[0x4] = inputVal;
 
-        int expectedVal = 0x156;
+        byte expectedVal = 0x56;
 
         byte[] load = { 0x83, 0x4E };
         memory.LoadMemory(load, cpu.ProgramCounter);
 
         Assert.That(cpu.VariableRegisters[0x4], Is.EqualTo(inputVal), "VY does not equal the expected start value.");
         cpu.Cycle();
-        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(inputVal & 0xF000));
+        Assert.That(cpu.VariableRegisters[0xF], Is.EqualTo(inputVal & 0x1));
         Assert.That(cpu.VariableRegisters[0x3], Is.EqualTo(expectedVal), "VX was not set to VY and shifted left 1");
     }
 

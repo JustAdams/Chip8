@@ -14,7 +14,7 @@ internal class CPU
     private Random _random;
 
     public bool KeyPressed { get; set; }
-    public int CurrentKey { get; set; }
+    public byte CurrentKey { get; set; }
 
     /// <summary>
     /// Current instruction in memory.
@@ -23,7 +23,7 @@ internal class CPU
     /// <summary>
     /// Points to locations in memory.
     /// </summary>
-    public int IndexRegister { get; private set; }
+    public ushort IndexRegister { get; private set; }
 
     /// <summary>
     /// 16 8-bit general-purpose variable registers labeled 0 - F.
@@ -275,14 +275,11 @@ internal class CPU
     /// <param name="NN">Value to add to VX.</param>
     private void Op_7XNN(int X, byte NN)
     {
-        VariableRegisters[X] += NN;
-        // Set carry flag VF if there's overflow
-        if (VariableRegisters[X] > 255)
+        if (VariableRegisters[X] + NN > 255)
         {
-            VariableRegisters[0xF] = 1;
-            // Doing a modulo here to simulate overflow since we are using integers.
-            VariableRegisters[X] %= 255;
+            VariableRegisters[0xF] = 0x1;
         }
+        VariableRegisters[X] += NN;
     }
 
     /// <summary>
@@ -336,10 +333,16 @@ internal class CPU
         VariableRegisters[X] = (byte)((VariableRegisters[X] - VariableRegisters[Y]) & 0xFF);
     }
 
+    /// <summary>
+    /// Assigns the value of VY to VX. VF is assigned the first bit of the new VX. VX is then bit-shifted right by 1.
+    /// </summary>
+    /// <param name="X"></param>
+    /// <param name="Y"></param>
     private void Op_8XY6(int X, int Y)
     {
         VariableRegisters[X] = VariableRegisters[Y];
-        VariableRegisters[0xF] = (byte)((VariableRegisters[X] & 0x1) == 1 ? 1 : 0);
+        // VF is set to the first bit of VX prior to shifting
+        VariableRegisters[0xF] = (byte)(VariableRegisters[X] >> 7);
         VariableRegisters[X] >>= 1;
     }
 
@@ -351,7 +354,7 @@ internal class CPU
     private void Op_8XYE(int X, int Y)
     {
         VariableRegisters[X] = VariableRegisters[Y];
-        //  VariableRegisters[0xF] = VariableRegisters[X] & 0xF000;
+        VariableRegisters[0xF] = (byte)(VariableRegisters[X] >> 7 == 0x1 ? 1 : 0);
         VariableRegisters[X] <<= 1;
     }
 
@@ -372,7 +375,7 @@ internal class CPU
     /// Sets the index register to NNN.
     /// </summary>
     /// <param name="NNN">Value to set the index register to.</param>
-    private void Op_ANNN(int NNN)
+    private void Op_ANNN(ushort NNN)
     {
         IndexRegister = NNN;
     }
