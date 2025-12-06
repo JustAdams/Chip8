@@ -1,6 +1,4 @@
-﻿using Chip8;
-
-namespace Chip8Tests;
+﻿namespace Chip8.Tests;
 
 public class CPUTests
 {

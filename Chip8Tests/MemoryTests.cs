@@ -1,7 +1,6 @@
-﻿using Chip8;
-using Chip8.Common;
+﻿using Chip8.Common;
 
-namespace Chip8Tests;
+namespace Chip8.Tests;
 
 public class MemoryTests
 {

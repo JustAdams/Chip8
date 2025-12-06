@@ -1,6 +1,6 @@
 using Chip8.Common;
 
-namespace Chip8Tests.Common;
+namespace Chip8.Tests.Common;
 
 public class OPCodeTests
 {
