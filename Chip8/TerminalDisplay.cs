@@ -3,19 +3,19 @@
 /// <summary>
 /// Uses the terminal as the display screen. The terminal should be sized at a minimum height/width or it's going to have weird wrapping and not display properly.
 /// </summary>
-internal class TerminalDisplay : IDisplay
+internal class TerminalDisplay
 {
 
-    DisplayBuffer display;
+    private readonly DisplayBuffer _display;
 
     public TerminalDisplay(DisplayBuffer display)
     {
-        this.display = display;
+        this._display = display;
     }
 
     public void ClearDisplay()
     {
-        display.Clear();
+        _display.Clear();
     }
     public void DrawDisplay()
     {
@@ -25,7 +25,7 @@ internal class TerminalDisplay : IDisplay
             for (int c = 0; c < DisplayBuffer.WIDTH; c++)
             {
                 int index = r * DisplayBuffer.WIDTH + c;
-                if (display.Pixels[index])
+                if (_display.Pixels[index])
                 {
                     Console.Write("*");
                 }
@@ -40,11 +40,11 @@ internal class TerminalDisplay : IDisplay
 
     public bool GetPixel(int x, int y)
     {
-        return display.Pixels[x * DisplayBuffer.WIDTH + y];
+        return _display.Pixels[x * DisplayBuffer.WIDTH + y];
     }
 
     public void SetPixel(int x, int y, bool bit)
     {
-        display.SetPixel(x, y, bit);
+        _display.SetPixel(x, y, bit);
     }
 }
