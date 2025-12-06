@@ -1,7 +1,7 @@
 ﻿using Chip8.Common;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Chip8Tests")]
+[assembly: InternalsVisibleTo("Chip8.Tests")]
 namespace Chip8;
 
 /// <summary>
