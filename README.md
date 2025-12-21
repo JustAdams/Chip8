@@ -5,7 +5,7 @@ Chip 8 is a simple virtual machine which can read and execute .ch8 programs. You
 Currently only a Monogame frontend is included, which should allow cross-platform interactions.
 
 ## Controls
-The top left of a QWERTY keyboard is used for this implementation.
+The top left of a QWERTY keyboard is used for this implementation. I make no guarantee that the key ordering will match the orderings that the author of any given ROM has intended.
 
 | Keyboard | Chip8 Mapping |
 | -------- | ------------- |
